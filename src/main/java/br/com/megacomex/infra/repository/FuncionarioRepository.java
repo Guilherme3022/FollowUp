@@ -126,11 +126,11 @@ public class FuncionarioRepository {
     }
 
     public boolean turnActive(int id) throws SQLException {
-        if (id <= 0) {
+        if (id < 1) {
             return false;
         }
         PreparedStatement preparedStatement = this.connection.getConnection().prepareStatement(
-                "UPDATE FollowUP SET Live = ? WHERE id = ?");
+                "UPDATE Funcionario SET Live = ? WHERE id = ?");
         preparedStatement.setInt(1, 1);
         preparedStatement.setInt(2, id);
         int rowsAffected = preparedStatement.executeUpdate();

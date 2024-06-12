@@ -121,10 +121,10 @@ public class Main {
                     followUpService.pesquisaAvancadaFollowUPs();
                     break;
                 case 5:
-                    followUpService.updateFollowUP();
+                    followUpService.updateFollowUP(funcionarioLogado);
                     break;
                 case 6:
-                    followUpService.menuReativarDesativarFollowUP();
+                    followUpService.menuReativarDesativarFollowUP(funcionarioLogado);
                     break;
                 case 7:
                     System.out.println("Saindo...");

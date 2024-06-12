@@ -85,6 +85,8 @@ public class FollowUpRepository {
                 followUP.setLive(resultSet.getInt("live"));
                 followUP.setQRegistrou(resultSet.getString("QRegistrou"));
                 followUP.setDataRegistrou(resultSet.getDate("dataRegistrou"));
+                followUP.setLast_updated_at(resultSet.getDate("last_updated_at"));
+                followUP.setUpdated_by(resultSet.getString("updated_by"));
                 followUPs.add(followUP);
             }
         }
@@ -351,76 +353,27 @@ public class FollowUpRepository {
     }
 
 
-    public boolean updateRefClienteByRefMega(String refMega, String newRefCliente) throws SQLException {
-        return updateFieldByRefMega("refCliente", refMega, newRefCliente);
-    }
 
-    public boolean updateFornecedorByRefMega(String refMega, String newFornecedor) throws SQLException {
-        return updateFieldByRefMega("fornecedor", refMega, newFornecedor);
-    }
-
-    public boolean updateNavioByRefMega(String refMega, String newNavio) throws SQLException {
-        return updateFieldByRefMega("navio", refMega, newNavio);
-    }
-
-    public boolean updateNotifyByRefMega(String refMega, String newNotify) throws SQLException {
-        return updateFieldByRefMega("notify", refMega, newNotify);
-    }
-
-    public boolean updateHblByRefMega(String refMega, String newHbl) throws SQLException {
-        return updateFieldByRefMega("hbl", refMega, newHbl);
-    }
-
-    public boolean updateArmadorByRefMega(String refMega, String newArmador) throws SQLException {
-        return updateFieldByRefMega("armador", refMega, newArmador);
-    }
-
-    public boolean updateAgenteByRefMega(String refMega, String newAgente) throws SQLException {
-        return updateFieldByRefMega("agente", refMega, newAgente);
-    }
-
-    public boolean updateCntrByRefMega(String refMega, String newCntr) throws SQLException {
-        return updateFieldByRefMega("cntr", refMega, newCntr);
-    }
-
-    public boolean updateRecintoByRefMega(String refMega, String newRecinto) throws SQLException {
-        return updateFieldByRefMega("recinto", refMega, newRecinto);
-    }
-
-    public boolean updateDocsOriginalByRefMega(String refMega, String newDocsOriginal) throws SQLException {
-        return updateFieldByRefMega("docsOriginal", refMega, newDocsOriginal);
-    }
-
-    public boolean updateFio_QuantidadeFio_PrecoFioByRefMega(String refMega, String newFio_QuantidadeFio_PrecoFio) throws SQLException {
-        return updateFieldByRefMega("fio_QuantidadeFio_PrecoFio", refMega, newFio_QuantidadeFio_PrecoFio);
-    }
-
-    public boolean updatePagtoAdv_AVistaByRefMega(String refMega, String newPagtoAdv_AVista) throws SQLException {
-        return updateFieldByRefMega("pagtoAdv_AVista", refMega, newPagtoAdv_AVista);
-    }
-
-    public boolean updateNDIByRefMega(String refMega, String newNDI) throws SQLException {
-        return updateFieldByRefMega("n_DI", refMega, newNDI);
-    }
-
-    public boolean updateCanalByRefMega(String refMega, String newCanal) throws SQLException {
-        return updateFieldByRefMega("canal", refMega, newCanal);
-    }
-    public boolean updateIndiceByRefMega(String refMega, String newCanal) throws SQLException {
-        return updateFieldByRefMega("indice", refMega, newCanal);
-    }
-
-    public boolean updateFieldByRefMega(String fieldName, String refMega, String newValue) throws SQLException {
-        if (refMega == null || newValue == null) {
+    public boolean updateFieldByRefMega(String fieldName, String refMega, String newValue, Funcionario funcionarioLogado) throws SQLException {
+        if (refMega == null || newValue == null || funcionarioLogado == null) {
             return false;
         }
 
-        PreparedStatement preparedStatement = this.connection.getConnection().prepareStatement(("UPDATE FollowUP SET " + fieldName + " = ? WHERE refMega = ?"));
-        preparedStatement.setString(1, newValue);
-        preparedStatement.setString(2, refMega);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
-        int rowsAffected = preparedStatement.executeUpdate();
-        return rowsAffected > 0;
+        String updateSQL = "UPDATE FollowUP SET " + fieldName + " = ?, updated_by = ?, last_updated_at = ? WHERE refMega = ?";
+        try (PreparedStatement preparedStatement = this.connection.getConnection().prepareStatement(updateSQL)) {
+            preparedStatement.setString(1, newValue);
+            preparedStatement.setString(2, funcionarioLogado.getNome()); // Nome do funcionário logado
+            preparedStatement.setString(3,dateFormat.format(new java.util.Date())); // Data atual
+            preparedStatement.setString(4, refMega);
+
+            int rowsAffected = preparedStatement.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao executar a atualização: " + e.getMessage());
+            throw e;
+        }
     }
     public boolean deleteLogical(String refMega) throws SQLException {
         PreparedStatement preparedStatement = this.connection.getConnection().prepareStatement(

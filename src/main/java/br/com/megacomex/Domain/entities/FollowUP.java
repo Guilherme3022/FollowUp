@@ -30,6 +30,8 @@ public class FollowUP {
     private String QRegistrou;
     private Date dataRegistrou;
     private char indice;
+    private String updated_by;
+    private Date last_updated_at;
 
 
     public FollowUP(int id, String refMega, String funcionarioResponsavel,String trading, String notify, String refCliente,
@@ -300,5 +302,21 @@ public class FollowUP {
 
     public void setIndice(char indice) {
         this.indice = indice;
+    }
+
+    public String getUpdated_by() {
+        return updated_by;
+    }
+
+    public void setUpdated_by(String updated_by) {
+        this.updated_by = updated_by;
+    }
+
+    public Date getLast_updated_at() {
+        return last_updated_at;
+    }
+
+    public void setLast_updated_at(Date last_updated_at) {
+        this.last_updated_at = last_updated_at;
     }
 }

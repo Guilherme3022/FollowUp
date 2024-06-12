@@ -223,8 +223,10 @@ public class FollowUpService {
         System.out.println("live: " + followUP.getLive());
         System.out.println("QRegistrou: " + followUP.getQRegistrou());
         System.out.println("dataRegistrou: " + followUP.getDataRegistrou());
+        System.out.println("updated_by: " + followUP.getUpdated_by());
+        System.out.println("last_updated_at: " + followUP.getLast_updated_at());
     }
-    public void updateFollowUPByRefMega(String refMega) {
+    public void updateFollowUPByRefMega(String refMega, Funcionario funcionario) {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Selecione os campos que deseja atualizar:");
         System.out.println("1. RefCliente");
@@ -309,8 +311,9 @@ public class FollowUpService {
         System.out.print("Digite o novo valor para " + campo + ": ");
         novoValor = scanner.next();
 
+
         try {
-            boolean sucesso = followUPRepository.updateFieldByRefMega(campo, refMega, novoValor);
+            boolean sucesso = followUPRepository.updateFieldByRefMega(campo, refMega, novoValor, funcionario);
             if (sucesso) {
                 System.out.println("Campo atualizado com sucesso!");
             } else {
@@ -397,7 +400,7 @@ public class FollowUpService {
         }
     }
 
-    public void updateFollowUP() {
+    public void updateFollowUP(Funcionario funcionario) {
         Scanner scanner = new Scanner(System.in);
         showAllFollowUPs();
 
@@ -411,7 +414,7 @@ public class FollowUpService {
                 System.out.println("FollowUP encontrado:");
                 followUPRepository.findByRefMega(refMega);
 
-                updateFollowUPByRefMega(refMega);
+                updateFollowUPByRefMega(refMega, funcionario);
             } else {
                 System.out.println("Nenhum FollowUP encontrado com a referência Mega fornecida.");
             }
@@ -420,7 +423,7 @@ public class FollowUpService {
         }
     }
 
-    public void menuReativarDesativarFollowUP() {
+    public void menuReativarDesativarFollowUP(Funcionario funcionario) {
         Scanner sc = null;
         while (true) {
             System.out.println("Menu de Reativar/Desativar FollowUP:");
@@ -435,10 +438,10 @@ public class FollowUpService {
 
             switch (escolha) {
                 case 1:
-                    reativarFollowUP();
+                    reativarFollowUP(funcionario);
                     break;
                 case 2:
-                    desativarFollowUP();
+                    desativarFollowUP(funcionario);
                     break;
                 case 3:
                     System.out.println("Retornando ao Menu Principal...");
@@ -449,7 +452,7 @@ public class FollowUpService {
         }
     }
 
-    private void reativarFollowUP() {
+    private void reativarFollowUP(Funcionario funcionario) {
         showAllFollowUPsInactives();
         Scanner sc = null;
         System.out.print("Digite a referência Mega do FollowUP que deseja reativar: ");
@@ -457,6 +460,7 @@ public class FollowUpService {
         try {
             boolean sucesso = followUPRepository.turnActive(refMega);
             if (sucesso) {
+                updateFollowUPByRefMega(refMega, funcionario);
                 System.out.println("FollowUP reativado com sucesso!");
             } else {
                 System.out.println("Falha ao reativar o FollowUP. Certifique-se de que a referência Mega seja válida.");
@@ -466,7 +470,7 @@ public class FollowUpService {
         }
     }
 
-    private void desativarFollowUP() {
+    private void desativarFollowUP(Funcionario funcionario) {
         showAllFollowUPs();
         Scanner sc = null;
         System.out.print("Digite a referência Mega do FollowUP que deseja desativar: ");
@@ -474,6 +478,7 @@ public class FollowUpService {
         try {
             boolean sucesso = followUPRepository.deleteLogical(refMega);
             if (sucesso) {
+                updateFollowUPByRefMega(refMega, funcionario);
                 System.out.println("FollowUP desativado com sucesso!");
             } else {
                 System.out.println("Falha ao desativar o FollowUP. Certifique-se de que a referência Mega seja válida.");
